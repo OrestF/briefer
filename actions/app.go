@@ -5,6 +5,7 @@ import (
 	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
+	"github.com/orest/briefer/rabbitmq"
 	"github.com/unrolled/secure"
 
 	contenttype "github.com/gobuffalo/mw-contenttype"
@@ -57,6 +58,9 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 		app.POST("/brief", BriefHandler)
+
+		// RABBITMQ CONSUMERS
+		rabbitmq.Start()
 	}
 
 	return app

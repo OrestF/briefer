@@ -7,9 +7,8 @@ import (
 type TextAnalyzer struct {
 }
 
-func (ta *TextAnalyzer) Brief(text string) ([]string){
-	s := summarize.NewFromString("Title", text)
+func (ta *TextAnalyzer) Brief(title string, text string) ([]string){
+	s := summarize.NewFromString(title, text)
 
-	println(s.KeyPoints())
 	return s.KeyPoints()
 }
