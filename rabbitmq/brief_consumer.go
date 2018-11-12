@@ -1,12 +1,13 @@
 package rabbitmq
 
 import (
+	"encoding/json"
 	"log"
 )
 
 func StartProjectsBriefConsumer() {
 	consumer := InitConsumer()
-	queueName := "projects.brief"
+	queueName := "estimator.projects.brief"
 	consumer.defineQueue(queueName)
 
 	msgs, err := consumer.channel.Consume(
@@ -25,11 +26,19 @@ func StartProjectsBriefConsumer() {
 	go func() {
 		for d := range msgs {
 			log.Printf("AMQP Received a message from %s: %s", queueName, d.Body)
-			client := InitClient()
-			client.Publish("callbacks.projects.brief", string(d.Body))
+			pp := ParsedProject{}
+			json.Unmarshal([]byte(d.Body), &pp)
+			producer := ProjectProducer{Id: pp.Id, Title: pp.Title, Description: pp.Description}
+			producer.Push()
 		}
 	}()
 
 	log.Printf(" [*] Waiting for messages from %s. To exit press CTRL+C", queueName)
 	<-briefForever
+}
+
+type ParsedProject struct {
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
