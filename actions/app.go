@@ -61,10 +61,6 @@ func App() *buffalo.App {
 
 		// RABBITMQ CONSUMERS
 		rabbitmq.Start()
-		println("envy PROT: ", envy.Get("PORT", "3000"))
-		println("envy GHOST: ", envy.Get("HOST", "nothing"))
-		println("envy URL: ", envy.Get("HEROKU_URL", "nothing"))
-		println("envy ENV: ", ENV)
 	}
 
 	return app
