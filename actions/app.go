@@ -6,6 +6,7 @@ import (
 	forcessl "github.com/gobuffalo/mw-forcessl"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
 	"github.com/orest/briefer/rabbitmq"
+	"github.com/orest/briefer/log"
 	"github.com/unrolled/secure"
 
 	contenttype "github.com/gobuffalo/mw-contenttype"
@@ -58,6 +59,25 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 		app.POST("/brief", BriefHandler)
+
+		na := log.Init("Briefer", envy.Get("NEW_RELIC_KEY", ""), true)
+
+		app.Use(func(next buffalo.Handler) buffalo.Handler {
+			return func(c buffalo.Context) error {
+				req := c.Request()
+				txn := na.StartTransaction(req.URL.String(), c.Response(), req)
+				ri := c.Value("current_route").(buffalo.RouteInfo)
+				txn.AddAttribute("PathName", ri.PathName)
+				txn.AddAttribute("RequestID", c.Value("request_id"))
+				defer txn.End()
+				err := next(c)
+				if err != nil {
+					txn.NoticeError(err)
+					return err
+				}
+				return nil
+			}
+		})
 
 		// RABBITMQ CONSUMERS
 		rabbitmq.Start()
