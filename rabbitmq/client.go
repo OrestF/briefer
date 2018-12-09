@@ -51,6 +51,7 @@ func (c *Client) Publish(queueName string, message string) {
 			Body:        []byte(message),
 		})
 	failOnError(err, "Failed to publish a message")
+	c.channel.Close()
 }
 
 func (c *Client) PublishAsync(queueName string, message string) {
