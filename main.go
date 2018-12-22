@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/orest/briefer/actions"
+	"google.golang.org/appengine"
 )
 
 // main is the starting point for your Buffalo application.
@@ -17,6 +18,7 @@ func main() {
 	if err := app.Serve(); err != nil {
 		log.Fatal(err)
 	}
+	appengine.Main()
 }
 
 /*

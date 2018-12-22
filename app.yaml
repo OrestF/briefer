@@ -1,0 +1,12 @@
+runtime: go
+api_version: go1
+
+handlers:
+
+# All URLs are handled by the Go application script
+- url: /.*
+  script: _go_app
+
+env_variables:
+  RABBITMQ_URL: amqp://guest:guest@localhost:5672/
+  NEW_RELIC_KEY: eu01xx7ad70e6cc85503a5b430bc2b3866a5c08b
